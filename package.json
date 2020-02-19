@@ -1,0 +1,29 @@
+{
+  "name": "starcraft2-value-bet-generator",
+  "version": "1.0.0",
+  "description": "Small scanner and generator html page for finder value bet in Starcraft2",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BETTING-CODE/starcraft2-value-bet-generator.git"
+  },
+  "keywords": [
+    "sc2",
+    "value",
+    "betting"
+  ],
+  "author": "Edward Beton <twitter:https://twitter.com/edwardbeton/>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BETTING-CODE/starcraft2-value-bet-generator/issues"
+  },
+  "homepage": "https://github.com/BETTING-CODE/starcraft2-value-bet-generator#readme",
+  "dependencies": {
+    "node-fetch": "^2.6.0",
+    "puppeteer": "^2.1.1",
+    "save": "^2.4.0"
+  }
+}
