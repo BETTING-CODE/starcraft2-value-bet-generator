@@ -15,3 +15,5 @@ All done! Next start command
 node index.js
 ```
 Now my script gets money line in ggbet and calculates value bet with aligulac API and wait a few seconds you see `index.html`, this is your table for wins!
+
+![screenshot](./screenshot.png)
