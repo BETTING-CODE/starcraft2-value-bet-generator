@@ -22,21 +22,95 @@ function format_number(num) {
     return Math.round(num * 100) / 100
 }
 
+function generate_html(sc2line) {
+
+    let html = `
+    <html>
+        <head>
+            <title>Starcraft2 value bet scanner</title> 
+        </head>
+        <style>
+            body {
+                margin: 0;
+                font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            td, th {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+            
+            tr:nth-child(even){background-color: #f2f2f2;}
+            
+            tr:hover {background-color: #ddd;}
+            
+            th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            .active {
+                background-color: green;
+                color: #fff;
+                padding : 5px;
+            }
+        </style>
+    <body>
+    `
+    let table = `<table>
+        <thead>
+            <th>Time</th>
+            <th>Player 1</th>
+            <th>Player 2</th>
+            <th>Player 1 ggbet odds</th>
+            <th>Player 1 my odds</th>
+            <th>Player 2 ggbet odds</th>
+            <th>Player 2 my odds</th>
+        </thead>
+        <tbody>`
+
+    for (let i = 0; i < sc2line.length; i++) {
+        table += `<tr>
+            <td>${sc2line[i][0].time}</td>
+            <td>${sc2line[i][0].name}</td>
+            <td>${sc2line[i][1].name}</td>
+            <td>${sc2line[i][0].odds}</td>
+            <td>
+                <p>my odd:${sc2line[i][0].custom_odds}</p>
+                <p class='${sc2line[i][0].value > 1 ? 'active' : ''}'>value:${sc2line[i][0].value * 100}%</p>
+            </td>
+            <td>${sc2line[i][1].odds}</td>
+            <td>
+                <p>my odd:${sc2line[i][1].custom_odds}</p>
+                <p class='${sc2line[i][1].value > 1 ? 'active' : ''}'>value:${sc2line[i][1].value * 100}%</p>
+            </td>
+        </tr>`
+
+    }
+
+    table += '</tbody></table>'
+
+    html += table
+    html += `
+        </body>
+    </html>
+    `
+
+    fs.writeFileSync('./index.html', html)
+}
+
 async function main() {
 
     let sc2line = await sc2.get_money_line()
 
-    let table = '<table>'
-    table += '<thead>'
-    table += '<th>Time</th>'
-    table += '<th>Player 1</th>'
-    table += '<th>Player 2</th>'
-    table += '<th>Player 1 ggbet odds</th>'
-    table += '<th>Player 1 my odds</th>'
-    table += '<th>Player 2 ggbet odds</th>'
-    table += '<th>Player 2 my odds</th>'
-    table += '</thead>'
-    table += '<tbody>'
+
 
     for (let i = 0; i < sc2line.length; i++) {
         let player_1 = await search_players(sc2line[i][0].name)
@@ -64,62 +138,9 @@ async function main() {
 
         sc2line[i][1].custom_odds = format_number((1 / custom_odds[1]))
         sc2line[i][1].value = format_number(sc2line[i][1].odds * (1 / sc2line[i][1].custom_odds))
-
-        table += '<tr>'
-        table += `<td>${sc2line[i][0].time}</td>`
-        table += `<td>${sc2line[i][0].name}</td>`
-        table += `<td>${sc2line[i][1].name}</td>`
-        table += `<td>${sc2line[i][0].odds}</td>`
-        table += `<td><p>my odd ->${sc2line[i][0].custom_odds}</p>
-                    <p class='${sc2line[i][0].value > 1 ? 'active' : ''}'>value:${sc2line[i][0].value * 100}%</p>
-                </td>`
-        table += `<td>${sc2line[i][1].odds}</td>`
-        table += `<td>
-                    <p>my odd ->${sc2line[i][1].custom_odds}</p>
-                    <p class='${sc2line[i][1].value > 1 ? 'active' : ''}'>value:${sc2line[i][1].value * 100}%</p>
-                </td>`
-        table += '</tr>'
-
     }
 
-    table += '</tbody>'
-    table += '</table>'
-    table += `<style>
-            body {
-                margin: 0;
-                font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            td, th {
-                border: 1px solid #ddd;
-                padding: 8px;
-              }
-              
-              tr:nth-child(even){background-color: #f2f2f2;}
-              
-              tr:hover {background-color: #ddd;}
-              
-              th {
-                padding-top: 12px;
-                padding-bottom: 12px;
-                text-align: left;
-                background-color: #4CAF50;
-                color: white;
-              }
-
-              .active {
-                  background-color: green;
-                  color: #fff;
-                  padding : 5px;
-              }
-
-            </style>`
-
-    fs.writeFileSync('./index.html', table)
+    generate_html(sc2line)
 }
 
 main()
