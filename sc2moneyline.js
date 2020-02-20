@@ -65,7 +65,7 @@ function getMatches (page, reliably) {
  *                                   otherwise will resolve after first success parsing
  * @returns {Promise<object>}
  */
-async function get_money_line (reliably = false) {
+async function getMoneyLine (reliably = false) {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
 
@@ -80,7 +80,5 @@ async function get_money_line (reliably = false) {
 }
 
 module.exports = {
-  get_money_line
+  getMoneyLine
 }
-
-get_money_line().then(res => console.log(res))
