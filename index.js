@@ -1,5 +1,5 @@
 const fs = require('fs')
-const sc2 = require('./sc2moneyline')
+const sc2 = require('ggbet-parser')
 const aligulac_api_key = '996TfcqdZrgcVpNJg0gK'
 const nodeFetch = require('node-fetch')
 const money = 100
@@ -149,7 +149,7 @@ function generateHtml(sc2line) {
 }
 
 async function main() {
-    let sc2line = await sc2.getMoneyLine()
+    let sc2line = await sc2.getLine('starcraft2')
 
     for (const match of Object.values(sc2line)) {
         const home = await searchPlayer(match.home)
