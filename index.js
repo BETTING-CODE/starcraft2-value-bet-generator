@@ -103,7 +103,8 @@ function generateHtml(sc2line) {
 
 
     for (const match of Object.values(sc2line)) {
-        table += `<tr>
+        if ((match.valueHome > 1 && match.mathExHome > 0) || (match.valueAway > 1 && match.mathExAway > 0)) {
+            table += `<tr>
             <td>
                 <p>${new Date(match.startTime).toLocaleDateString('en-EN', { hour: 'numeric', minute: 'numeric', month: 'short', day: 'numeric' }).toUpperCase()}<p>
             </td>
@@ -116,10 +117,10 @@ function generateHtml(sc2line) {
                     <p>math ex: ${match.mathExHome}</p>
                 </div>
                 ${
-            (match.valueHome > 1 && match.mathExHome > 0) ?
-                `<a class='bet' target='_blank' href='${generateLinkForBet(match)}'>BET</a>`
-                : ''
-            }
+                (match.valueHome > 1 && match.mathExHome > 0) ?
+                    `<a class='bet' target='_blank' href='${generateLinkForBet(match)}'>BET</a>`
+                    : ''
+                }
             </td>
             <td>
                 <p><b>${match.awayOdd}</b></p>
@@ -129,13 +130,14 @@ function generateHtml(sc2line) {
                     <p>math ex: ${match.mathExAway}</p>
                 </div>
                 ${
-            (match.valueAway > 1 && match.mathExAway > 0) ?
-                `<a class='bet' target='_blank' href='${generateLinkForBet(match)}'>BET</a>`
-                : ''
-            }
+                (match.valueAway > 1 && match.mathExAway > 0) ?
+                    `<a class='bet' target='_blank' href='${generateLinkForBet(match)}'>BET</a>`
+                    : ''
+                }
             </td>
             <td><img src='./images/${match.raceAway}.png'> ${match.away}</td>
         </tr>`
+        }
     }
     table += '</tbody></table>'
 
