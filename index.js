@@ -4,6 +4,7 @@ const unikrn = require('./unikrnparser')
 const aligulac_api_key = '996TfcqdZrgcVpNJg0gK'
 const nodeFetch = require('node-fetch')
 const money = 100
+const bank = 1000
 
 async function searchPlayer(name) {
     return nodeFetch(`http://aligulac.com/search/json/?q=${name}&search_for=players`)
@@ -98,6 +99,7 @@ function generateHtml(sc2line) {
             
         </style>
     <body>
+    <p>Bank - $${bank}</p>
     `
     let table = `<table>
         <tbody>`
@@ -132,6 +134,12 @@ function generateHtml(sc2line) {
                 <p class='calc_info'>calc odd: ${match.calcAwayOdd}</p>
             </td>
             <td><img src='./images/${match.raceAway}.png'> ${match.away}</td>
+            <td>
+                <p>GGbet Cash Bet</b>
+                <p><b>$${match.cashGGBet}</b></p>
+                <p>Unikrn Cash Bet</b>
+                <p><b>$${match.cashUnikrn}</b></p>
+            </td>
         </tr>`
     }
     table += '</tbody></table>'
@@ -154,6 +162,7 @@ async function main() {
     let unikrnsc2Line = await unikrn.getLine('sc2')
 
     for (const match of Object.values(sc2line)) {
+        const lengthMatches = Object.values(sc2line).length
         const home = await searchPlayer(match.home)
         const away = await searchPlayer(match.away)
         const odds = await getPredictMatch(home.id, away.id)
@@ -199,6 +208,21 @@ async function main() {
         match.mathExAwayGGbet = formatNumber(mathExAwayGGbet)
         match.mathExHomeUnikrn = formatNumber(mathExHomeUnikrn)
         match.mathExAwayUnikrn = formatNumber(mathExAwayUnikrn)
+
+        const cashGGBet = (match.valueHomeGGbet > 1) 
+        ? 
+        (bank / lengthMatches) * (((match.homeOdd * odds.proba) - 1) / (match.homeOdd - 1))
+        :
+        (bank / lengthMatches) * (((match.awayOdd * odds.probb) - 1) / (match.awayOdd - 1))
+
+        const cashUnikrn = (match.valueHomeUnikrn > 1)
+        ?
+        (bank / lengthMatches) * (((match.homeOddUnikrn * odds.proba) - 1) / (match.homeOddUnikrn - 1))
+        :
+        (bank / lengthMatches) * (((match.awayOddUnikrn * odds.probb) - 1) / (match.awayOddUnikrn - 1))
+
+        match.cashUnikrn = formatNumber(cashUnikrn)
+        match.cashGGBet = formatNumber(cashGGBet)
 
     }
 
