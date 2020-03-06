@@ -4,7 +4,7 @@
   "description": "Small scanner and generator html page for finder value bet in Starcraft2",
   "main": "index.js",
   "scripts": {
-    "generate" : "node index.js",
+    "generate": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/BETTING-CODE/starcraft2-value-bet-generator#readme",
   "dependencies": {
-    "ggbet-parser": "^1.0.0",
+    "ggbet-parser": "^1.0.1",
     "node-fetch": "^2.6.0",
     "puppeteer": "^2.1.1"
   }

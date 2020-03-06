@@ -1,10 +1,8 @@
 const fs = require('fs')
 const sc2 = require('ggbet-parser')
-const unikrn = require('./unikrnparser')
 const aligulac_api_key = '996TfcqdZrgcVpNJg0gK'
 const nodeFetch = require('node-fetch')
 const money = 100
-const bank = 1000
 
 async function searchPlayer(name) {
     return nodeFetch(`http://aligulac.com/search/json/?q=${name}&search_for=players`)
@@ -17,16 +15,16 @@ async function getPredictMatch(id1, id2) {
         .then(res => res.json())
 }
 
-function formatNumber(num) {
-    return Math.round(num * 100) / 100
-}
-
 function generateLinkForBet(match) {
     //example link - https://gg22.bet/ru/betting/match/heromarine-vs-awers-24-02
     const date = new Date(match.startTime)
     const month = ('0' + (date.getMonth() + 1)).slice(-2)
     const day = ('0' + date.getDate()).slice(-2)
     return `https://gg22.bet/ru/betting/match/${match.home.replace(' ', '-').toLowerCase()}-vs-${match.away.replace(' ', '-').toLowerCase()}-${day}-${month}`
+}
+
+function formatNumber(num) {
+    return Math.round(num * 100) / 100
 }
 
 function generateHtml(sc2line) {
@@ -99,13 +97,15 @@ function generateHtml(sc2line) {
             
         </style>
     <body>
-    <p>Bank - $${bank}</p>
     `
     let table = `<table>
         <tbody>`
 
 
-    for (const match of Object.values(sc2line)) {
+    for (let i = 0; i < sc2line.length; i++) {
+
+        const match = sc2line[i]
+
         table += `<tr>
             <td>
                 <p>${new Date(match.startTime).toLocaleDateString('en-EN', { hour: 'numeric', minute: 'numeric', month: 'short', day: 'numeric' }).toUpperCase()}<p>
@@ -116,33 +116,62 @@ function generateHtml(sc2line) {
                 <p><b>${match.homeOdd}</b></p>
                 <p class='${match.valueHomeGGbet > 1 ? 'active calc_info' : ''}'>value: ${match.valueHomeGGbet * 100}%</p>
                 <p class='calc_info'>math ex: ${match.mathExHomeGGbet}</p>
-                <p>UNIKRN</p>
-                <p><b>${match.homeOddUnikrn}</b></p>
-                <p class='${match.valueHomeUnikrn > 1 ? 'active calc_info' : ''}'>value: ${match.valueHomeUnikrn * 100}%</p>
-                <p class='calc_info'>math ex: ${match.mathExHomeUnikrn}</p>
                 <p class='calc_info'>calc odd: ${match.calcHomeOdd}</p>
+                ${
+                    (match.valueHomeGGbet > 1 && match.mathExHomeGGbet > 0) ?
+                    `<a class='bet' target='_blank' href='${generateLinkForBet(match)}'>BET</a>`
+                    : ''
+                }
             </td>
             <td>
                 <p>GGBET</p>
                 <p><b>${match.awayOdd}</b></p>
                 <p class='${match.valueAwayGGbet > 1 ? 'active calc_info' : ''}'>value: ${match.valueAwayGGbet * 100}%</p>
                 <p class='calc_info'>math ex: ${match.mathExAwayGGbet}</p>
-                <p>UNIKRN</p>
-                <p><b>${match.awayOddUnikrn}</b></p>
-                <p class='${match.valueAwayUnikrn > 1 ? 'active calc_info' : ''}'>value: ${match.valueAwayUnikrn * 100}%</p>
-                <p class='calc_info'>math ex: ${match.mathExAwayUnikrn}</p>
                 <p class='calc_info'>calc odd: ${match.calcAwayOdd}</p>
+                ${
+                    (match.valueAwayGGbet > 1 && match.mathExAwayGGbet > 0) ?
+                    `<a class='bet' target='_blank' href='${generateLinkForBet(match)}'>BET</a>`
+                    : ''
+                }
             </td>
             <td><img src='./images/${match.raceAway}.png'> ${match.away}</td>
             <td>
                 <p>GGbet Cash Bet</b>
                 <p><b>$${match.cashGGBet}</b></p>
-                <p>Unikrn Cash Bet</b>
-                <p><b>$${match.cashUnikrn}</b></p>
             </td>
         </tr>`
     }
     table += '</tbody></table>'
+
+    /*
+
+    //this code for developer
+
+    table += '<div style="margin-top:20px;"></div>'
+
+    table += `<table>
+    <tbody>`
+
+
+    for (const match of Object.values(sc2line)) {
+        if (match.cashGGBet > 0) {
+            table += `<tr>
+            <td>${match.home}</td>
+            <td>${match.away}</td>
+            <td>${match.homeOdd.toString().replace('.', ',')}</td>
+            <td>${match.awayOdd.toString().replace('.', ',')}</td>
+            <td>${match.calcHomeOdd.toString().replace('.', ',')}</td>
+            <td>${match.calcAwayOdd.toString().replace('.', ',')}</td>
+            <td>${match.mathExHomeGGbet.toString().replace('.', ',')} / ${(match.valueHomeGGbet * 100).toString().replace('.', ',')}</td>
+            <td>${match.mathExAwayGGbet.toString().replace('.', ',')} / ${(match.valueAwayGGbet * 100).toString().replace('.', ',')}</td>
+            <td>${match.valueHomeGGbet > 1 ? 1 : ''} ${match.valueAwayGGbet > 1 ? 2 : ''}</td>
+            <td>${match.cashGGBet.toString().replace('.', ',')}</td>
+        </tr>`
+        }
+    }
+    table += '</tbody></table>'
+    */
 
     html += table
     html += `
@@ -153,37 +182,36 @@ function generateHtml(sc2line) {
     fs.writeFileSync('./index.html', html)
 }
 
-function searchMergeUnirknLine(match, unikrnLine) {
-    return unikrnLine.filter(item => item.markets[0].name == match.home && item.markets[1].name == match.away)
+function getCashNumber(coefficient) {
+    let cash = 0
+    if (coefficient < 1.5) {
+        cash = 100
+    } else if (coefficient >= 1.5 && coefficient <= 2.5) {
+        cash = 50
+    } else if (coefficient > 2.5) {
+        cash = 35
+    }
+    return cash
 }
 
 async function main() {
     let sc2line = await sc2.getLine('starcraft2')
-    let unikrnsc2Line = await unikrn.getLine('sc2')
+
+    let newSC2line = []
 
     for (const match of Object.values(sc2line)) {
-        const lengthMatches = Object.values(sc2line).length
         const home = await searchPlayer(match.home)
         const away = await searchPlayer(match.away)
         const odds = await getPredictMatch(home.id, away.id)
 
-        const unikrnMarkets = searchMergeUnirknLine(match, unikrnsc2Line)
-
-
         match.raceHome = home.race
         match.raceAway = away.race
-        
+
         match.calcHomeOdd = formatNumber(1 / odds.proba)
         match.calcAwayOdd = formatNumber(1 / odds.probb)
-        
+
         match.valueHomeGGbet = formatNumber(match.homeOdd * (1 / match.calcHomeOdd))
         match.valueAwayGGbet = formatNumber(match.awayOdd * (1 / match.calcAwayOdd))
-        
-        match.valueHomeUnikrn = (unikrnMarkets.length > 0) ? formatNumber(unikrnMarkets[0].markets[0].odd * (1 / match.calcHomeOdd)) : 0
-        match.valueAwayUnikrn = (unikrnMarkets.length > 0) ? formatNumber(unikrnMarkets[0].markets[1].odd * (1 / match.calcAwayOdd)) : 0
-
-        match.homeOddUnikrn = (unikrnMarkets.length > 0) ? unikrnMarkets[0].markets[0].odd : 0
-        match.awayOddUnikrn = (unikrnMarkets.length > 0) ? unikrnMarkets[0].markets[1].odd : 0
 
         const ph1 = 1 / 2
         const ph2 = 1 / 2
@@ -194,39 +222,31 @@ async function main() {
         const pah2 = (ph2 * ph2a) / pa
 
         const winMoneyHomeGGbet = (money * match.homeOdd) - money
-        const winMoneyHomeUnikrn = (money * match.homeOddUnikrn) - money
         const lose = -money
         const winMoneyAwayGGbet = (money * match.awayOdd) - money
-        const winMoneyAwayUnikrn = (money * match.awayOddUnikrn) - money
 
         const mathExHomeGGbet = (winMoneyHomeGGbet * pah1) + (lose * (1 - pah1))
         const mathExAwayGGbet = (winMoneyAwayGGbet * pah2) + (lose * (1 - pah2))
-        const mathExHomeUnikrn = (winMoneyHomeUnikrn * pah1) + (lose * (1 - pah1))
-        const mathExAwayUnikrn = (winMoneyAwayUnikrn * pah1) + (lose * (1 - pah1))
 
         match.mathExHomeGGbet = formatNumber(mathExHomeGGbet)
         match.mathExAwayGGbet = formatNumber(mathExAwayGGbet)
-        match.mathExHomeUnikrn = formatNumber(mathExHomeUnikrn)
-        match.mathExAwayUnikrn = formatNumber(mathExAwayUnikrn)
 
-        const cashGGBet = (match.valueHomeGGbet > 1) 
-        ? 
-        (bank / lengthMatches) * (((match.homeOdd * odds.proba) - 1) / (match.homeOdd - 1))
-        :
-        (bank / lengthMatches) * (((match.awayOdd * odds.probb) - 1) / (match.awayOdd - 1))
+        let cash = 0
+        if (match.valueHomeGGbet > 1) {
+            cash = getCashNumber(match.homeOdd)
+            match.cashGGBet = cash
+            newSC2line.push(match)
+        }
+        if (match.valueAwayGGbet > 1) {
+            cash = getCashNumber(match.awayOdd)
+            match.cashGGBet = cash
+            newSC2line.push(match)
+        }
 
-        const cashUnikrn = (match.valueHomeUnikrn > 1)
-        ?
-        (bank / lengthMatches) * (((match.homeOddUnikrn * odds.proba) - 1) / (match.homeOddUnikrn - 1))
-        :
-        (bank / lengthMatches) * (((match.awayOddUnikrn * odds.probb) - 1) / (match.awayOddUnikrn - 1))
-
-        match.cashUnikrn = formatNumber(cashUnikrn)
-        match.cashGGBet = formatNumber(cashGGBet)
 
     }
 
-    generateHtml(sc2line)
+    generateHtml(newSC2line)
 }
 
 main()
