@@ -1,5 +1,8 @@
 const fs = require('fs')
 const sc2 = require('ggbet-parser')
+const unikrn = require('./unikrn')
+const buffbet = require('./buffbet')
+const lootbet = require('./lootbet')
 const aligulac_api_key = '996TfcqdZrgcVpNJg0gK'
 const nodeFetch = require('node-fetch')
 const money = 100
@@ -99,6 +102,17 @@ function generateHtml(sc2line) {
     <body>
     `
     let table = `<table>
+            <thead>
+                <td>time</td>
+                <td>Home / Away </td>
+                <td>GGBET</td>
+                <td>LOOTBET</td>
+                <td>UNIKRN</td>
+                <td>BUFFBET</td>
+                <td>CALC BET</td>
+                <td>BET</td>
+                <td>CASH</td>
+            </thead>
         <tbody>`
 
 
@@ -110,41 +124,50 @@ function generateHtml(sc2line) {
             <td>
                 <p>${new Date(match.startTime).toLocaleDateString('en-EN', { hour: 'numeric', minute: 'numeric', month: 'short', day: 'numeric' }).toUpperCase()}<p>
             </td>
-            <td>${match.home} <img src='./images/${match.raceHome}.png'></td>
             <td>
-                <p>GGBET</p>
-                <p><b>${match.homeOdd}</b></p>
-                <p class='${match.valueHomeGGbet > 1 ? 'active calc_info' : ''}'>value: ${match.valueHomeGGbet * 100}%</p>
-                <p class='calc_info'>math ex: ${match.mathExHomeGGbet}</p>
-                <p class='calc_info'>calc odd: ${match.calcHomeOdd}</p>
+                ${match.home} <img src='./images/${match.raceHome}.png'> </br>
+                ${match.away} <img src='./images/${match.raceAway}.png'> 
+            </td>
+            <td>
+                ${match.odds.ggbet.home} </br>
+                ${match.odds.ggbet.away}
+            </td>
+            <td>
+                ${match.odds.lootbet.home} </br>
+                ${match.odds.lootbet.away}
+            </td>
+            <td>
+                ${match.odds.unikrn.home} </br>
+                ${match.odds.unikrn.away}
+            </td>
+            <td>
+                ${match.odds.buffbet.home} </br>
+                ${match.odds.buffbet.away}
+            </td>
+            <td>
+                ${match.calcHomeOdd} </br>
+                ${match.calcAwayOdd}
+            </td>
+            <td>
                 ${
                     (match.valueHomeGGbet > 1 && match.mathExHomeGGbet > 0) ?
-                    `<a class='bet' target='_blank' href='${generateLinkForBet(match)}'>BET</a>`
-                    : ''
+                    `<a class='bet' target='_blank' href='${generateLinkForBet(match)}'>BET</a></br>`
+                    : 'none </br>'
                 }
-            </td>
-            <td>
-                <p>GGBET</p>
-                <p><b>${match.awayOdd}</b></p>
-                <p class='${match.valueAwayGGbet > 1 ? 'active calc_info' : ''}'>value: ${match.valueAwayGGbet * 100}%</p>
-                <p class='calc_info'>math ex: ${match.mathExAwayGGbet}</p>
-                <p class='calc_info'>calc odd: ${match.calcAwayOdd}</p>
                 ${
                     (match.valueAwayGGbet > 1 && match.mathExAwayGGbet > 0) ?
-                    `<a class='bet' target='_blank' href='${generateLinkForBet(match)}'>BET</a>`
-                    : ''
+                    `<a class='bet' target='_blank' href='${generateLinkForBet(match)}'>BET</a></br>`
+                    : 'none </br>'
                 }
             </td>
-            <td><img src='./images/${match.raceAway}.png'> ${match.away}</td>
             <td>
-                <p>GGbet Cash Bet</b>
-                <p><b>$${match.cashGGBet}</b></p>
+                $${match.cashGGBet}
             </td>
         </tr>`
     }
     table += '</tbody></table>'
 
-    /*
+
 
     //this code for developer
 
@@ -171,7 +194,6 @@ function generateHtml(sc2line) {
         }
     }
     table += '</tbody></table>'
-    */
 
     html += table
     html += `
@@ -194,12 +216,55 @@ function getCashNumber(coefficient) {
     return cash
 }
 
+function searchLine(firstLine, secondLine) {
+    let returnLine = {}
+    for (const id in secondLine) {
+        const secondMatch = secondLine[id]
+        if (
+            firstLine.away == secondMatch.away &&
+            firstLine.home == secondMatch.home
+        ) {
+            returnLine = secondMatch
+        }
+    }
+    return returnLine
+}
+
 async function main() {
-    let sc2line = await sc2.getLine('starcraft2')
+    const ggbetLine = await sc2.getLine('starcraft2')
+    const unikrnLine = await unikrn.getLine('sc2')
+    const buffbetLine = await buffbet.getLine('StarCraft 2')
+    const lootbetLine = await lootbet.getLine()
 
-    let newSC2line = []
+    let line = []
 
-    for (const match of Object.values(sc2line)) {
+    for (const id in ggbetLine) {
+
+        const match = ggbetLine[id]
+
+        const unikrnOdds = searchLine(match, unikrnLine)
+        const buffbetOdds = searchLine(match, buffbetLine)
+        const lootbetOdds = searchLine(match, lootbetLine)
+
+        match.odds = {
+            unikrn: {
+                home: unikrnOdds.homeOdd,
+                away: unikrnOdds.awayOdd
+            },
+            ggbet: {
+                home: match.homeOdd,
+                away: match.awayOdd
+            },
+            buffbet: {
+                home: buffbetOdds.homeOdd,
+                away: buffbetOdds.awayOdd
+            },
+            lootbet: {
+                home: lootbetOdds.homeOdd,
+                away: lootbetOdds.awayOdd
+            }
+        }
+
         const home = await searchPlayer(match.home)
         const away = await searchPlayer(match.away)
         const odds = await getPredictMatch(home.id, away.id)
@@ -235,22 +300,18 @@ async function main() {
         if (match.valueHomeGGbet > 1) {
             cash = getCashNumber(match.homeOdd)
             match.cashGGBet = cash
-            newSC2line.push(match)
+            line.push(match)
         }
         if (match.valueAwayGGbet > 1) {
             cash = getCashNumber(match.awayOdd)
             match.cashGGBet = cash
-            newSC2line.push(match)
+            line.push(match)
         }
-
-
     }
 
-    generateHtml(newSC2line)
+    generateHtml(line)
 }
 
 main()
-
-
 
 
