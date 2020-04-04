@@ -18,6 +18,11 @@ async function getPredictMatch(id1, id2) {
         .then(res => res.json())
 }
 
+async function getPlayerInfo(id) {
+    return nodeFetch(`http://aligulac.com//api/v1/player/${id}/?apikey=${aligulac_api_key}`)
+    .then(res => res.json())
+}
+
 function generateLinkForBet(match) {
     //example link - https://gg22.bet/ru/betting/match/heromarine-vs-awers-24-02
     const date = new Date(match.startTime)
@@ -267,7 +272,17 @@ async function main() {
 
         const home = await searchPlayer(match.home)
         const away = await searchPlayer(match.away)
-        const odds = await getPredictMatch(home.id, away.id)
+        const homeInfo = await getPlayerInfo(home.id)
+        const awayInfo = await getPlayerInfo(away.id)
+
+        const formHome = (homeInfo.form[away.race][0] / (homeInfo.form[away.race][0] + homeInfo.form[away.race][1])) * 100
+        const formAway = (awayInfo.form[home.race][0] / (awayInfo.form[home.race][0] + awayInfo.form[home.race][1])) * 100
+        const sum = formHome + formAway
+
+        const odds = {
+            proba : Math.ceil(formHome / sum * 100) / 100,
+            probb : Math.floor(formAway / sum * 100) / 100
+        }
 
         match.raceHome = home.race
         match.raceAway = away.race
