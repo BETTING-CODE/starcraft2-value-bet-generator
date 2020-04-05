@@ -272,17 +272,20 @@ async function main() {
 
         const home = await searchPlayer(match.home)
         const away = await searchPlayer(match.away)
-        const homeInfo = await getPlayerInfo(home.id)
-        const awayInfo = await getPlayerInfo(away.id)
+        const odds = await getPredictMatch(home.id, away.id)
 
-        const formHome = (homeInfo.form[away.race][0] / (homeInfo.form[away.race][0] + homeInfo.form[away.race][1])) * 100
-        const formAway = (awayInfo.form[home.race][0] / (awayInfo.form[home.race][0] + awayInfo.form[home.race][1])) * 100
-        const sum = formHome + formAway
+        // example for FORM players
+        // const homeInfo = await getPlayerInfo(home.id)
+        // const awayInfo = await getPlayerInfo(away.id)
 
-        const odds = {
-            proba : Math.ceil(formHome / sum * 100) / 100,
-            probb : Math.floor(formAway / sum * 100) / 100
-        }
+        // const formHome = (homeInfo.form[away.race][0] / (homeInfo.form[away.race][0] + homeInfo.form[away.race][1])) * 100
+        // const formAway = (awayInfo.form[home.race][0] / (awayInfo.form[home.race][0] + awayInfo.form[home.race][1])) * 100
+        // const sum = formHome + formAway
+
+        // const odds = {
+        //     proba : Math.ceil(formHome / sum * 100) / 100,
+        //     probb : Math.floor(formAway / sum * 100) / 100
+        // }
 
         match.raceHome = home.race
         match.raceAway = away.race
