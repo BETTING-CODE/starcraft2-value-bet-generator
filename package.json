@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/BETTING-CODE/starcraft2-value-bet-generator#readme",
   "dependencies": {
-    "ggbet-parser": "^1.0.1",
+    "ggbet-parser": "^1.0.4",
     "node-fetch": "^2.6.1",
     "puppeteer": "^2.1.1"
   }
