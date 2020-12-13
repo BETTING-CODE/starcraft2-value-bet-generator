@@ -1,4 +1,4 @@
-const ggbetURL = 'https://gg112.bet'
+const ggbetURL = 'https://gg94.bet'
 //актуальный урл, всегда можно найти вот здесь.
 //https://vk.com/ggbet_zerkalo
 const ggbetParser = require('ggbet-parser')
@@ -14,8 +14,8 @@ async function searchPlayer(name) {
         .then(res => res.players[0])
 }
 
-async function getPredictMatch(id1, id2) {
-    return nodeFetch(`http://aligulac.com/api/v1/predictmatch/${id1},${id2}/?apikey=${aligulac_api_key}&bo=3`)
+async function getPredictMatch(id1, id2, bo) {
+    return nodeFetch(`http://aligulac.com/api/v1/predictmatch/${id1},${id2}/?apikey=${aligulac_api_key}&bo=${bo}`)
         .then(res => res.json())
 }
 
@@ -45,7 +45,7 @@ async function getValueMatches(data) {
 
         const home = await searchPlayer(match.home) //ищем первого игрока
         const away = await searchPlayer(match.away) //ищем второго игрока
-        const odds = await getPredictMatch(home.id, away.id) // получаем предикты в процентах на основе ELO ранкеда
+        const odds = await getPredictMatch(home.id, away.id, match.bo) // получаем предикты в процентах на основе ELO ранкеда
 
         const margin = (((1/match.homeOdd) + (1/match.awayOdd)) - 1)/ 2 
         //считаем маржинальность ставок, чтобы учесть их в наших рассчетах
@@ -83,6 +83,8 @@ async function getValueMatches(data) {
         */
 
         array.push({
+            time : new Date(match.startTime),
+            bo : match.bo,
             tournamentName : (match.tournamentName.length > 15) ? match.tournamentName.slice(0, match.tournamentName.length - 9) : match.tournamentName,
             home : match.home,
             away : match.away,
