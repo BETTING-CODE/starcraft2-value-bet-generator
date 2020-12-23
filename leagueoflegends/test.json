@@ -1,0 +1,72 @@
+{
+   "5:f6493e6a-7b91-45a2-be8b-e59783d11758":{
+      "id":"5:f6493e6a-7b91-45a2-be8b-e59783d11758",
+      "originalId":"f6493e6a-7b91-45a2-be8b-e59783d11758",
+      "score":"0:0",
+      "status":"NOT_STARTED",
+      "startTime":1608710400000,
+      "home":"DAMWON Gaming",
+      "away":"Liiv SANDBOX",
+      "homeOdd":"1.16",
+      "awayOdd":"4.93",
+      "tournamentName":"KeSPA Cup 2020",
+      "tournamentId":"gin:e7e3e995-95eb-4995-97ba-b7ea835c23d7",
+      "bo":""
+   },
+   "5:66aaf14d-8b60-4191-97d2-f6388147676b":{
+      "id":"5:66aaf14d-8b60-4191-97d2-f6388147676b",
+      "originalId":"66aaf14d-8b60-4191-97d2-f6388147676b",
+      "score":"0:0",
+      "status":"NOT_STARTED",
+      "startTime":1608714000000,
+      "home":"Afreeca Freecs",
+      "away":"Nongshim Red Force",
+      "homeOdd":"1.48",
+      "awayOdd":"2.57",
+      "tournamentName":"KeSPA Cup 2020",
+      "tournamentId":"gin:e7e3e995-95eb-4995-97ba-b7ea835c23d7",
+      "bo":""
+   },
+   "5:8a624a10-eadf-4e22-ab4c-944746295fbf":{
+      "id":"5:8a624a10-eadf-4e22-ab4c-944746295fbf",
+      "originalId":"8a624a10-eadf-4e22-ab4c-944746295fbf",
+      "score":"0:0",
+      "status":"NOT_STARTED",
+      "startTime":1608717600000,
+      "home":"Liiv SANDBOX",
+      "away":"DRX",
+      "homeOdd":"1.58",
+      "awayOdd":"2.31",
+      "tournamentName":"KeSPA Cup 2020",
+      "tournamentId":"gin:e7e3e995-95eb-4995-97ba-b7ea835c23d7",
+      "bo":""
+   },
+   "5:62bdb9a8-84ae-4918-87a6-bb67c3944437":{
+      "id":"5:62bdb9a8-84ae-4918-87a6-bb67c3944437",
+      "originalId":"62bdb9a8-84ae-4918-87a6-bb67c3944437",
+      "score":"0:0",
+      "status":"NOT_STARTED",
+      "startTime":1608721200000,
+      "home":"DAMWON Gaming",
+      "away":"Afreeca Freecs",
+      "homeOdd":"1.32",
+      "awayOdd":"3.25",
+      "tournamentName":"KeSPA Cup 2020",
+      "tournamentId":"gin:e7e3e995-95eb-4995-97ba-b7ea835c23d7",
+      "bo":""
+   },
+   "5:5ca16589-c60f-4cfd-889b-9a4a17577068":{
+      "id":"5:5ca16589-c60f-4cfd-889b-9a4a17577068",
+      "originalId":"5ca16589-c60f-4cfd-889b-9a4a17577068",
+      "score":"0:0",
+      "status":"NOT_STARTED",
+      "startTime":1608724800000,
+      "home":"DRX",
+      "away":"Nongshim Red Force",
+      "homeOdd":"2.29",
+      "awayOdd":"1.59",
+      "tournamentName":"KeSPA Cup 2020",
+      "tournamentId":"gin:e7e3e995-95eb-4995-97ba-b7ea835c23d7",
+      "bo":""
+   }
+}
