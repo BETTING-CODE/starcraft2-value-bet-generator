@@ -36,7 +36,7 @@ async function getValueMatches(data) {
         for (let i = 0; i < otherBookmakersOdds.length; i++) {
             if ( (otherBookmakersOdds[i].team1 == away && otherBookmakersOdds[i].team2 == home)) {
                 for (let j = 0; j < otherBookmakersOdds[i].events.length; j++) {
-                    if (otherBookmakersOdds[i].events[j].name == 'Winner') {
+                    if (otherBookmakersOdds[i].events[j].name == 'Winner' && otherBookmakersOdds[i].events[j].map == 0) {
                         array = otherBookmakersOdds[i].events[j].bets
                     }
                 }
@@ -50,8 +50,8 @@ async function getValueMatches(data) {
         //считаем маржинальность ставок, чтобы учесть их в наших рассчетах
         //специально делим на 2 чтобы потом применить к каждому из вероятностей игроков
 
-        const calcHomeOdd = formatNumber(1 / proba + margin) //считаем коэффициент победы с учетом маржи для первого игрока
-        const calcAwayOdd = formatNumber(1 / probb + margin) //считаем коэффициент победы с учетом маржи для второго игрока
+        const calcHomeOdd = formatNumber(1 / (proba + margin)) //считаем коэффициент победы с учетом маржи для первого игрока
+        const calcAwayOdd = formatNumber(1 / (probb + margin)) //считаем коэффициент победы с учетом маржи для второго игрока
 
         const valueHome = formatNumber(homeOdd * (1 / calcHomeOdd)) //считаем вэлью для первого игрока
         const valueAway = formatNumber(awayOdd * (1 / calcAwayOdd)) //считам вэлью для второго игрока
@@ -71,6 +71,7 @@ async function getValueMatches(data) {
             const allOdds = searchOddsWinnerAnotherBookmakers(match.home, match.away) //находим матч на других букмекерских конторах и получаем коэффициенты
             const calcValue = calculateValue(match.homeOdd, match.awayOdd, odds.proba, odds.probb)
             
+            /*
             for (let i = 0; i < allOdds.length; i++) {
                 if (allOdds[i].bookmaker !== 'GG.BET') {
                     const calcValue = calculateValue(allOdds[i].odd1, allOdds[i].odd2, odds.proba, odds.probb)
@@ -92,6 +93,7 @@ async function getValueMatches(data) {
                     })
                 }
             }
+            */
 
             
             array.push({

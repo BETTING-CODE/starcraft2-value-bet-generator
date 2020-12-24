@@ -31,10 +31,12 @@ async function getValueMatches(data) {
             const W1 = 1 / (Math.pow(10, (-dr / 400)) + 1)
             const W2 = 1 - W1
 
+            console.log(home, ' - ', away)
 
             for (let j = 0; j < match.events.length; j++) {
-                if (match.events[j].name == 'Winner') {
+                if (match.events[j].name == 'Winner' && match.events[j].map == 0) {
                     const event = match.events[j]
+                    console.log(event)
                     for (let k = 0; k < event.bets.length; k++) {
 
                         const bookmaker = event.bets[k].bookmaker
@@ -43,8 +45,8 @@ async function getValueMatches(data) {
                         const awayOdd = event.bets[k].odd2
                         const margin = (((1 / homeOdd) + (1 / awayOdd)) - 1) / 2
 
-                        const calcHomeOdd = formatNumber(1 / W1 + margin)
-                        const calcAwayOdd = formatNumber(1 / W2 + margin)
+                        const calcHomeOdd = formatNumber(1 / (W1 + margin))
+                        const calcAwayOdd = formatNumber(1 / (W2 + margin))
 
                         const valueHome = formatNumber(homeOdd * (1 / calcHomeOdd))
                         const valueAway = formatNumber(awayOdd * (1 / calcAwayOdd))
