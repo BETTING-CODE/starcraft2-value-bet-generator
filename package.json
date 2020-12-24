@@ -27,6 +27,7 @@
     "ggbet-parser": "^1.0.6",
     "googleapis": "^66.0.0",
     "node-fetch": "^2.6.1",
-    "puppeteer": "^2.1.1"
+    "puppeteer": "^2.1.1",
+    "yargs": "^16.2.0"
   }
 }

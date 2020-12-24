@@ -2,7 +2,7 @@ const nodeFetch = require('node-fetch')
 
 const url = 'https://myodds.bet/api/public'
 
-function getAllBetsInBookmakers() {
+function getAllBetsInBookmakers(game = 'SC2') {
     return nodeFetch(url, {
         headers : {
             Token : 'PCFBS69ZL9SHjm6AsVKMG'
@@ -10,7 +10,7 @@ function getAllBetsInBookmakers() {
     })
     .then(res => res.json())
     .then(res => {
-        return res.filter(r => r.game == 'SC2')
+        return res.filter(r => r.game == game)
     })
     .catch(e => [])
 }

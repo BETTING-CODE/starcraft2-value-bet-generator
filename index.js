@@ -1,17 +1,22 @@
-const game = 'csgo'
+const yargs = require('yargs')
+const argv = yargs.argv;
+const sync = argv.sync
+const game = argv.game
+const test = argv.test
+
 const starcraft = require('./starcraft/index')
 const lol = require('./leagueoflegends/index')
 const csgo = require('./csgo/index')
 
 switch (game) {
-    case 'starcraft':
-        starcraft.main(false)
+    case 'sc2':
+        starcraft.main(test)
         break;
     case 'lol':
-        lol.main(false, true)
+        lol.main(test, sync)
         break;
     case 'csgo':
-        csgo.main(false, true)
+        csgo.main(test, sync)
         break;
     default:
         console.log('Что-то пошло не так, проверь параметры')

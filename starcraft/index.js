@@ -5,7 +5,7 @@ const ggbetParser = require('ggbet-parser')
 const fs = require('fs')
 const aligulac_api_key = '996TfcqdZrgcVpNJg0gK'
 const nodeFetch = require('node-fetch')
-const { getAllBetsInBookmakers } = require('./myoddsbetAPI.js')
+const { getAllBetsInBookmakers } = require('../api/myoddsbetAPI.js')
 const { getCashNumber, formatNumber } = require('../api/support')
 
 
@@ -93,6 +93,7 @@ async function getValueMatches(data) {
                 }
             }
 
+            
             array.push({
                 time: new Date(match.startTime),
                 bo: match.bo,
