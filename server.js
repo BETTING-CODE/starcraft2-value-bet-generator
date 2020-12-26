@@ -38,7 +38,7 @@ app.get('/dota', (req, res) => {
 app.get('/lol', (req, res) => {
     const sync = (typeof req.query.sync !== 'undefined')
     lol
-        .main(false, false)
+        .main(false, sync)
         .then(response => {
             res.send(
                 mainHtml() +
@@ -49,7 +49,7 @@ app.get('/lol', (req, res) => {
 app.get('/sc2', (req, res) => {
     const sync = (typeof req.query.sync !== 'undefined')
     starcraft
-        .main(false, false)
+        .main(false, sync)
         .then(response => {
             res.send(
                 mainHtml() +
