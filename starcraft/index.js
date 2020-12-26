@@ -1,4 +1,4 @@
-const ggbetURL = 'http://goggbet.com'
+const ggbetURL = 'http://gg93.bet'
 //актуальный урл, всегда можно найти вот здесь.
 //https://vk.com/ggbet_zerkalo
 const ggbetParser = require('ggbet-parser')
@@ -117,20 +117,24 @@ async function getValueMatches(data) {
     }
 
     console.table(array)
+    return array
 }
-
 async function main(testJSON = false) {
     if (testJSON) {
         const data = JSON.parse(fs.readFileSync('./test.json', 'utf-8'))
-        getValueMatches(data)
+        const response = getValueMatches(data)
+        return response
     } else {
-        const ggbetLine = ggbetParser.getLine('starcraft2', {
+        const response = await ggbetParser.getLine('starcraft2', {
             mirrorUrl: ggbetURL
         })
             .then(data => {
-                getValueMatches(data)
+                const res = getValueMatches(data)
+                console.log(res)
+                return res
             })
             .catch(e => console.log(e))
+        return response
     }
 }
 

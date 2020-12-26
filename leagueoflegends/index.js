@@ -70,7 +70,7 @@ async function getValueMatches(data) {
         }
     }
 
-    console.table(array)
+    return array
 
 }
 
@@ -84,13 +84,16 @@ async function main(testJSON = false, sync = false, game = 'LOL') {
 
     if (testJSON) {
         const data = JSON.parse(fs.readFileSync('./test.json', 'utf-8'))
-        getValueMatches(data)
+        const response = getValueMatches(data)
+        return response
     } else {
         console.log('Забираем коэффициенты от букмекера ' + new Date())
-        getAllBetsInBookmakers(game)
+        const response = await getAllBetsInBookmakers(game)
             .then(data => {
-                getValueMatches(data)
+                const res = getValueMatches(data)
+                return res
             })
+        return response
     }
 }
 

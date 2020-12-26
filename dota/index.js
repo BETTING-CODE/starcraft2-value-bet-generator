@@ -9,7 +9,7 @@ function searchTeam(name, teams) {
 }
 
 async function getValueMatches(data) {
-    const teams = JSON.parse(fs.readFileSync('./csgo/ratings.json', 'utf-8'))
+    const teams = JSON.parse(fs.readFileSync('./dota/ratings.json', 'utf-8'))
     let array = []
 
     for (let i = 0; i < data.length; i++) {
@@ -30,6 +30,7 @@ async function getValueMatches(data) {
             const dr = eloRatingHome - eloRatingAway
             const W1 = 1 / (Math.pow(10, (-dr / 400)) + 1)
             const W2 = 1 - W1
+
 
             for (let j = 0; j < match.events.length; j++) {
                 if (match.events[j].name == 'Winner' && match.events[j].map == 0) {
@@ -73,11 +74,11 @@ async function getValueMatches(data) {
 
 }
 
-async function main(testJSON = false, sync = false, game = 'CSGO') {
+async function main(testJSON = false, sync = false, game = 'DOTA') {
 
     if (sync) {
         console.log('Запускаем синхронизацию с GosuGamers и выкачиваем рейтинги ' + new Date())
-        await getRatingAndSave(10, 'counterstrike', './csgo/ratings.json')
+        await getRatingAndSave(10, 'dota2', './dota/ratings.json')
         console.log('Готово ' + new Date())
     }
 
