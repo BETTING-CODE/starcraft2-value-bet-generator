@@ -2,18 +2,17 @@ function formatNumber(num) {
     return Math.round(num * 100) / 100
 }
 
-function getCashNumber(coefficient) {
-    let cash = 0
-    if (coefficient < 1.5) {
-        cash = 150
-    } else if (coefficient >= 1.5 && coefficient <= 2.5) {
-        cash = 100
-    } else if (coefficient > 2.5) {
-        cash = 85
-    }
-    return cash
-}
+//https://wewin.neocities.org/bet-size.html
+function getCashNumber(odds, bank = 10000, risk = 12, edge = 1) {
+    let betSizePercent =
+        Math.log10(1 - (1 / (odds / (1 + (edge / 100))))) /
+        Math.log10(Math.pow(10, -risk));
 
+    if (isNaN(betSizePercent)) {
+        betSizePercent = 0;
+    }
+    return (betSizePercent * bank).toFixed(1)
+}
 
 module.exports = {
     formatNumber,

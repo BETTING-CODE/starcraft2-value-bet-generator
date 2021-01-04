@@ -1,26 +1,24 @@
 const express = require('express')
 const app = express()
 const port = 3000
-const starcraft = require('./starcraft/index')
-const lol = require('./leagueoflegends/index')
-const csgo = require('./csgo/index')
-const dota = require('./dota/index')
-const { createHtmlTable } = require('./views/table')
-const { createMenu } = require('./views/menu')
-const { style } = require('./views/style')
+const starcraft = require('../starcraft/index')
+const lol = require('../leagueoflegends/index')
+const csgo = require('../csgo/index')
+const dota = require('../dota/index')
+const cors = require('cors')
 
-function mainHtml() {
-    return style() + createMenu()
-}
+app.use(cors())
 
 app.get('/csgo', (req, res) => {
     const sync = (typeof req.query.sync !== 'undefined')
     csgo
         .main(false, sync)
         .then(response => {
-            res.send(
-                mainHtml() +
-                createHtmlTable(response))
+            res.json(response)
+        })
+        .catch(e => {
+            console.log(e)
+            res.json([])
         })
 })
 
@@ -29,9 +27,11 @@ app.get('/dota', (req, res) => {
     dota
         .main(false, sync)
         .then(response => {
-            res.send(
-                mainHtml() +
-                createHtmlTable(response))
+            res.json(response)
+        })
+        .catch(e => {
+            console.log(e)
+            res.json([])
         })
 })
 
@@ -40,9 +40,11 @@ app.get('/lol', (req, res) => {
     lol
         .main(false, sync)
         .then(response => {
-            res.send(
-                mainHtml() +
-                createHtmlTable(response))
+            res.json(response)
+        })
+        .catch(e => {
+            console.log(e)
+            res.json([])
         })
 })
 
@@ -51,14 +53,12 @@ app.get('/sc2', (req, res) => {
     starcraft
         .main(false, sync)
         .then(response => {
-            res.send(
-                mainHtml() +
-                createHtmlTable(response))
+            res.json(response)
         })
-})
-
-app.get('/', (req, res) => {
-    res.send(mainHtml())
+        .catch(e => {
+            console.log(e)
+            res.json([])
+        })
 })
 
 app.listen(port, () => {

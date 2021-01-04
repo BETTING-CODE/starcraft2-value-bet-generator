@@ -98,9 +98,9 @@ async function getValueMatches(data) {
             
             array.push({
                 time: new Date(match.startTime),
-                bo: match.bo,
+                //bo: match.bo,
                 bk: 'GGBET',
-                tournamentName: (match.tournamentName.length > 15) ? match.tournamentName.slice(0, match.tournamentName.length - match.tournamentName.length * 0.5) : match.tournamentName,
+                //tournamentName: (match.tournamentName.length > 15) ? match.tournamentName.slice(0, match.tournamentName.length - match.tournamentName.length * 0.5) : match.tournamentName,
                 home: match.home,
                 away: match.away,
                 homeOdd: match.homeOdd,
